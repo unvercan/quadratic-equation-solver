@@ -1,5 +1,7 @@
 # Quadratic-Equation-Solver
-Quadratic Equation Solver with Linear Algebra
+- Graduate Optimization project,
+- Quadratic equation solver with Linear Algebra using LU and QR decomposition.
 
-Argument 1: input file location <br />
-Argument 2: '--qr' for solving using QR Decomposition 
+Arguments:
+- Argument 1: input file location.
+- Argument 2: '--qr' to solve the equation using QR Decomposition, otherwise LU Decomposition.
