@@ -11,53 +11,43 @@
 using namespace std;
 using namespace Eigen;
 
-typedef struct coordinate_type
-{
+typedef struct coordinate_type {
     double x;
     double y;
 } Coordinate;
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
+
     string inputFile;
     vector<Coordinate> coordinates;
     bool withQR = false;
 
     // parse arguments
-    if (argc <= 1)
-    {
+    if (argc <= 1) {
         cout << "No input file parameter was passed." << endl;
         cout << "Default input file: input.txt" << endl << endl;
         inputFile = "input.txt"; // default
-    }
-    else
-    {
-        if (argc >= 2)
-        {
+    } else {
+        if (argc >= 2) {
             string firstParameter = argv[1];
-            if (firstParameter.compare("--qr") == 0)
-            {
+            if (firstParameter == "--qr") {
                 cout << "Input file parameter is wrong." << endl;
                 cout << "Default input file: input.txt" << endl << endl;
                 inputFile = "input.txt"; // default
                 withQR = true;
-            }
-            else
+            } else
                 inputFile = firstParameter;
         }
-        if (argc >= 3)
-        {
+        if (argc >= 3) {
             string secondParameter = argv[2];
-            if (secondParameter.compare("--qr") == 0)
+            if (secondParameter == "--qr")
                 withQR = true;
-            else
-            {
+            else {
                 cout << "QR parameter is wrong." << endl;
                 return 0;
             }
         }
-        if (argc >= 4)
-        {
+        if (argc >= 4) {
             cout << "Too many parameters were passed." << endl;
             return 0;
         }
@@ -66,21 +56,16 @@ int main(int argc, char **argv)
     // read input file
     ifstream input(inputFile);
     string input_x, input_y;
-    if (input.is_open())
-    {
-        while (input >> input_x >> input_y)
-        {
-            Coordinate temp =
-            {
-                stod(input_x),
-                stod(input_y)
+    if (input.is_open()) {
+        while (input >> input_x >> input_y) {
+            Coordinate temp = {
+                    stod(input_x),
+                    stod(input_y)
             };
             coordinates.push_back(temp);
         }
         input.close();
-    }
-    else
-    {
+    } else {
         cout << "Input file can not be found." << endl;
         return 0;
     }
@@ -93,8 +78,7 @@ int main(int argc, char **argv)
     VectorXd w(M);
 
     // construct equation variables with given input
-    for(int counter=0; counter<N; counter++)
-    {
+    for (int counter = 0; counter < N; counter++) {
         Coordinate temp = coordinates[counter];
         A(counter, 0) = temp.x * temp.x;
         A(counter, 1) = temp.x;
@@ -109,22 +93,19 @@ int main(int argc, char **argv)
     cout << y << endl << endl;
 
     // check number of given coordinates
-    if (N < 3)
-    {
+    if (N < 3) {
         cout << "There are not enough coordinates." << endl;
         return 0;
     }
+
     // check square-matrix
     // solve with LU decomposition
-    else if (N == 3)
-    {
+    else if (N == 3) {
         MatrixXd P = A.partialPivLu().permutationP();
-
         cout << "Matrix P:" << endl;
         cout << P << endl << endl;
 
         MatrixXd L = MatrixXd::Identity(N, M);
-
         cout << "Matrix L:" << endl;
         cout << L << endl << endl;
 
@@ -138,19 +119,14 @@ int main(int argc, char **argv)
         cout << P * L * U << endl << endl;
 
         w = A.partialPivLu().solve(y);
-    }
-    else
-    {
+    } else {
         // solve with QR decomposition
-        if (withQR == 1)
-        {
+        if (withQR == 1) {
             MatrixXd Q = A.householderQr().householderQ();
-
             cout << "Matrix Q:" << endl;
             cout << Q << endl << endl;
 
             MatrixXd R = Q.transpose() * A;
-
             cout << "Matrix R:" << endl;
             cout << R << endl << endl;
 
@@ -164,25 +140,20 @@ int main(int argc, char **argv)
         }
 
         // solve with LU decomposition
-        else
-        {
+        else {
             MatrixXd aPrime = A.transpose() * A;
-
             cout << "Matrix A Prime:" << endl;
             cout << aPrime << endl << endl;
 
             VectorXd yPrime = A.transpose() * y;
-
             cout << "Vector Y Prime:" << endl;
             cout << yPrime << endl << endl;
 
             MatrixXd P = aPrime.partialPivLu().permutationP();
-
             cout << "Matrix P:" << endl;
             cout << P << endl << endl;
 
             MatrixXd L = MatrixXd::Identity(M, M);
-
             cout << "Matrix L:" << endl;
             cout << L << endl << endl;
 
@@ -206,19 +177,15 @@ int main(int argc, char **argv)
     double a = w(0);
     double b = w(1);
     double c = w(2);
-
-    cout << "Equation: "<< "y = " << a << "*x^2 + " << b << "*x + " << c << endl;
+    cout << "Equation: " << "y = " << a << "*x^2 + " << b << "*x + " << c << endl;
 
     double sumOfSquaredErrors = 0;
-
     // calculate squared errors
-    for (Coordinate temp: coordinates)
-    {
+    for (Coordinate temp: coordinates) {
         double yPrime = a * (temp.x * temp.x) + b * temp.x + c;
         double squaredError = temp.y - yPrime;
         sumOfSquaredErrors += squaredError;
     }
-
     cout << "Error: " << sumOfSquaredErrors << endl;
 
     return 0;
