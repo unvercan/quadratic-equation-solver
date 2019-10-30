@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# cmake
+/cmake-build-debug/
+
+# Eigen 3 library
+/Eigen/
