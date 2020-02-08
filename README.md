@@ -1,5 +1,4 @@
 # Quadratic-Equation-Solver
-- Graduate Optimization project,
 - Quadratic equation solver with Linear Algebra using LU and QR decomposition.
 
 Usage:
